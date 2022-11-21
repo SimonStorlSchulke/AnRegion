@@ -10,6 +10,7 @@ If you ever want to re-render just a region of an animation and want a simple to
 - Fill in the filepaths to the original and the region-rendered image sequence folders
 - If you want, you can let AnRegion ignore all filenames containing the words specified in the third input-field (separate words with a single ; and NO space)
 - If you want AnRegion to overwrite the original files, check the checkbox. Else, the composited files will be saved in a subfolder of the Original Renderings Folder */anrender*
+- This also works, when only some region-rendered frames (like frame 20-50) are given. AnRegion chooses Images to combine based on the number at the end of the filename.
 
 Supported File Types include exr, png, jpg, tiff - every format that ImageMagick supports.
 
