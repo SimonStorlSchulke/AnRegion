@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -26,32 +25,34 @@ var exPath string
 var fileNumber int
 var fileNumProcessed int
 
-func CompFile(filepathRegion, filepathOriginal, filepathRegionNew string) {
+func FileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+// CompFile composits two files ontop of each other and saves them to the given filepathRegionNew
+func CompFile(filepathRegion, filepathOriginal, filepathNew string) {
 
 	var err error
 
 	// Solution for not enough memory - try again after one second and stop loop when the command succeeded. Kinda wonky but it works..
 	for {
+		// run ImageMagick's compos.exe without terminal window appearing
 		cmd_path := "C:\\Windows\\system32\\cmd.exe"
-		cmd_instance := exec.Command(cmd_path, "/c", exPath+"/lib/composite.exe", "-compose", "atop", "-geometry", "-0-0", filepathRegion, filepathOriginal, filepathRegionNew)
+		cmd_instance := exec.Command(cmd_path, "/c", exPath+"/lib/composite.exe", "-compose", "atop", "-geometry", "-0-0", filepathRegion, filepathOriginal, filepathNew)
 		cmd_instance.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 		err = cmd_instance.Run()
 
-		if _, err = os.Stat(filepathRegion); errors.Is(err, os.ErrNotExist) {
-			continue
-		}
-
-		if _, err = os.Stat(filepathOriginal); errors.Is(err, os.ErrNotExist) {
-			continue
-		}
-
-		if err != nil {
-			fmt.Println(err)
-			time.Sleep(time.Second)
-			fmt.Println(err, "Trying again")
-		} else {
+		if err == nil {
 			break
 		}
+
+		fmt.Println("Error:", err)
+		fmt.Println("Trying again for ", filepathNew)
+		time.Sleep(time.Second)
 	}
 	fileNumProcessed++
 }
@@ -132,17 +133,23 @@ func (a *App) CompIt(imageMagickPath, folderRegion, folderOriginal, ignorePrefix
 		filepathOriginal := filepath.Join(folderOriginal, fileOriginal.Name())
 		filepathRegion := filepath.Join(folderRegion, mRegionFiles[frameNumberOriginal])
 
-		filepathRegionNew := ""
+		fmt.Println("check for existence: ", filepathRegion)
+		if !FileExists(filepathRegion) {
+			fmt.Println(filepathRegion, " does not exist - continue")
+			continue
+		}
+
+		fileNew := ""
 
 		if overwrite {
-			filepathRegionNew = filepath.Join(folderOriginal, fileOriginal.Name())
+			fileNew = filepath.Join(folderOriginal, fileOriginal.Name())
 		} else {
 			err = os.MkdirAll(filepath.Join(path.Join(folderOriginal, "anrender")), os.ModePerm)
 			if err != nil {
 				println("Could not create output folder ", err)
 				return
 			}
-			filepathRegionNew = filepath.Join(folderOriginal, "anrender", fileOriginal.Name())
+			fileNew = filepath.Join(folderOriginal, "anrender", fileOriginal.Name())
 		}
 
 		if err != nil {
@@ -153,7 +160,7 @@ func (a *App) CompIt(imageMagickPath, folderRegion, folderOriginal, ignorePrefix
 		fmt.Println(fileOriginal.Name(), frameNumberOriginal)
 
 		// go CompFile(filepathRegion, filepathRegion, filepathRegionNew) //TODO solve memory issue...
-		go CompFile(filepathRegion, filepathOriginal, filepathRegionNew)
+		go CompFile(filepathRegion, filepathOriginal, fileNew)
 
 		if err != nil {
 			fmt.Println(err)
