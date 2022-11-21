@@ -13,8 +13,6 @@ If you ever want to re-render just a region of an animation and want a simple to
 
 ![anregion](./anregion_sh.jpg)
 
-This is the official Wails Svelte-TS template.
-
 ## Credits
 
 This Tool is written in Go and Svelte, using [Wails](https://wails.io) and [ImageMagick](https://imagemagick.org). See the ImageMagick license at https://imagemagick.org/script/license.php
