@@ -17,4 +17,4 @@ Supported File Types include exr, png, jpg, tiff - every format that ImageMagick
 
 ## Credits
 
-This Tool is written in Go and Svelte, using [Wails](https://wails.io) and [ImageMagick](https://imagemagick.org). See the ImageMagick license at https://imagemagick.org/script/license.php
+This Tool is written in [Go](https://go.dev) and [Svelte](https://svelte.dev), using [Wails](https://wails.io) and [ImageMagick](https://imagemagick.org). See the ImageMagick license at https://imagemagick.org/script/license.php
