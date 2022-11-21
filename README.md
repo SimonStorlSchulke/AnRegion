@@ -11,6 +11,8 @@ If you ever want to re-render just a region of an animation and want a simple to
 - If you want, you can let AnRegion ignore all filenames containing the words specified in the third input-field (separate words with a single ; and NO space)
 - If you want AnRegion to overwrite the original files, check the checkbox. Else, the composited files will be saved in a subfolder of the Original Renderings Folder */anrender*
 
+Supported File Types include exr, png, jpg, tiff - every format that ImageMagick supports.
+
 ![anregion](./anregion_sh.jpg)
 
 ## Credits
